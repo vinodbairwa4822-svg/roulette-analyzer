@@ -1,4 +1,4 @@
-// *******************************************************************
+*******************************************************************
 // 7. generatePrediction FUNCTION (Final Logic: Trend + Percentage Filtering)
 // *******************************************************************
 
@@ -145,5 +145,4 @@ function generatePrediction(numbers, colourStats, dozenStats, oddEvenStats) {
     // Numbers ko 10 tak limit karo
     prediction = prediction.slice(0, 10);
     
-    return prediction; 
-}
+    return pred
