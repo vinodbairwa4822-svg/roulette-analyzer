@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roulette Prediction Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Roulette Prediction Analyzer</h1>
+
+        <div class="input-section">
+            <textarea id="numbersInput" placeholder="Enter latest roulette numbers separated by commas"></textarea>
+            <button onclick="calculatePrediction()">Calculate Prediction</button>
+        </div>
+
+        <div class="results-section">
+            <h2>Statistics</h2>
+            <div id="colourStats"></div>
+            <div id="dozenStats"></div>
+            <div id="oddEvenStats"></div>
+        </div>
+
+        <div class="prediction-section">
+            <h2>Predicted Numbers</h2>
+            <div id="predictedNumbers"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
