@@ -82,13 +82,3 @@ function generatePrediction(colourStats, dozenStats, oddEvenStats) {
     let oddEvenChoice = oddEvenStats.odd > oddEvenStats.even ? "odd" : "even";
 
     let prediction = [];
-    selectedColourNumbers.forEach(n => {
-        let dozen = n >= 1 && n <= 12 ? 1 : (n >= 13 && n <= 24 ? 2 : 3);
-        if (topDozens.includes(dozen)) {
-            if (oddEvenChoice === "odd" && n%2 !== 0) prediction.push(n);
-            if (oddEvenChoice === "even" && n%2 === 0) prediction.push(n);
-        }
-    });
-
-    return prediction.slice(0,7);
-}
