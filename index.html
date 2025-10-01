@@ -10,8 +10,8 @@
 
     <h2>Roulette Analyzer</h2>
 
-    <label>Enter numbers (comma separated):</label><br>
-    <textarea id="numbersInput" placeholder="e.g. 1,3,5,8,12,19,22"></textarea><br>
+    <label>Enter numbers (comma separated, exactly 5 numbers):</label><br>
+    <textarea id="numbersInput" placeholder="e.g. 1,3,5,8,12"></textarea><br>
 
     <button onclick="calculateStats()">Calculate Stats</button>
 
@@ -19,6 +19,7 @@
     <div id="dozenStats"></div>
     <div id="oddEvenStats"></div>
     <div id="dozenSuggestion"></div>
+    <div id="prediction"></div> <!-- Prediction result output -->
 
     <script src="script.js"></script>
 </body>
