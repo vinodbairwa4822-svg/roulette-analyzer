@@ -12,11 +12,10 @@ function calculateStats() {
 
     const colourStats = calculateColourStats(numbers);
     const dozenStats = calculateDozenStats(numbers);
-    const oddEvenStats = calculateOddEvenStats(numbers);
 
-    displayStats(colourStats, dozenStats, oddEvenStats);
-    suggestDozens(dozenStats);
-    displayPrediction(numbers, colourStats, dozenStats, oddEvenStats);
+    displayStats(colourStats, dozenStats);
+    suggestDozen(dozenStats);
+    displayPrediction(colourStats, dozenStats);
 }
 
 function calculateColourStats(numbers) {
@@ -51,57 +50,40 @@ function calculateDozenStats(numbers) {
     };
 }
 
-function calculateOddEvenStats(numbers) {
-    let oddCount = 0, evenCount = 0;
-    numbers.forEach(n => {
-        if (n%2 === 0) evenCount++;
-        else oddCount++;
-    });
-    const total = oddCount + evenCount;
-    if (total === 0) return { odd: 0, even: 0 };
-
-    return {
-        odd: ((oddCount/total)*100).toFixed(2),
-        even: ((evenCount/total)*100).toFixed(2)
-    };
-}
-
-function displayStats(colourStats, dozenStats, oddEvenStats) {
+function displayStats(colourStats, dozenStats) {
     document.getElementById("colourStats").innerHTML = `<b>Colour %:</b> Red = ${colourStats.red}%, Black = ${colourStats.black}%`;
     document.getElementById("dozenStats").innerHTML = `<b>Dozen %:</b> 1st = ${dozenStats.dozen1}%, 2nd = ${dozenStats.dozen2}%, 3rd = ${dozenStats.dozen3}%`;
-    document.getElementById("oddEvenStats").innerHTML = `<b>Odd/Even %:</b> Odd = ${oddEvenStats.odd}%, Even = ${oddEvenStats.even}%`;
 }
 
-function suggestDozens(dozenStats) {
+function suggestDozen(dozenStats) {
     let dozenPercentages = [
         {dozen: "1st Dozen (1-12)", percent: parseFloat(dozenStats.dozen1)},
         {dozen: "2nd Dozen (13-24)", percent: parseFloat(dozenStats.dozen2)},
         {dozen: "3rd Dozen (25-36)", percent: parseFloat(dozenStats.dozen3)}
     ];
     dozenPercentages.sort((a,b) => b.percent - a.percent);
-    let message = `✅ Best Bet: <b>${dozenPercentages[0].dozen}</b> (${dozenPercentages[0].percent}%) aur <b>${dozenPercentages[1].dozen}</b> (${dozenPercentages[1].percent}%)`;
+    let message = `✅ Best Dozen: <b>${dozenPercentages[0].dozen}</b> (${dozenPercentages[0].percent}%)`;
     document.getElementById("dozenSuggestion").innerHTML = message;
 }
 
-function displayPrediction(numbers, colourStats, dozenStats, oddEvenStats) {
+function displayPrediction(colourStats, dozenStats) {
+    let bestDozenNumbers = [];
     let bestDozen = "1st";
-    let dozenNumbers = [];
 
+    // Step 1: Find the highest dozen %
     if (dozenStats.dozen2 > dozenStats.dozen1 && dozenStats.dozen2 > dozenStats.dozen3) bestDozen = "2nd";
     else if (dozenStats.dozen3 > dozenStats.dozen1 && dozenStats.dozen3 > dozenStats.dozen2) bestDozen = "3rd";
 
-    if (bestDozen === "1st") dozenNumbers = Array.from({length:12},(_,i)=>i+1);
-    else if (bestDozen === "2nd") dozenNumbers = Array.from({length:12},(_,i)=>i+13);
-    else dozenNumbers = Array.from({length:12},(_,i)=>i+25);
+    if (bestDozen === "1st") bestDozenNumbers = Array.from({length:12},(_,i)=>i+1);
+    else if (bestDozen === "2nd") bestDozenNumbers = Array.from({length:12},(_,i)=>i+13);
+    else bestDozenNumbers = Array.from({length:12},(_,i)=>i+25);
 
+    // Step 2: Choose colour with highest %
     let colour = (parseFloat(colourStats.red) > parseFloat(colourStats.black)) ? "Red" : "Black";
-    let chosenColourNumbers = dozenNumbers.filter(n => (colour==="Red" ? redNumbers.includes(n) : blackNumbers.includes(n)));
+    let chosenColourNumbers = bestDozenNumbers.filter(n => (colour==="Red" ? redNumbers.includes(n) : blackNumbers.includes(n)));
 
-    let oddEven = (parseFloat(oddEvenStats.odd) > parseFloat(oddEvenStats.even)) ? "Odd" : "Even";
-    let finalNumbers = chosenColourNumbers.filter(n => (oddEven==="Odd" ? n%2!==0 : n%2===0));
-
-    if (finalNumbers.length > 6) finalNumbers = finalNumbers.slice(0,6);
-    while (finalNumbers.length < 6) finalNumbers.push(0);
+    // Step 3: Select first 6 numbers only
+    let finalNumbers = chosenColourNumbers.slice(0,6);
 
     document.getElementById("prediction").innerHTML = `<b>🎯 Predicted Numbers:</b> ${finalNumbers.join(", ")}`;
 }
