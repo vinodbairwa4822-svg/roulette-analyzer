@@ -5,8 +5,8 @@ function calculateStats() {
     const input = document.getElementById("numbersInput").value;
     const numbers = input.split(",").map(x => parseInt(x.trim())).filter(x => !isNaN(x));
 
-    if (numbers.length !== 5) {
-        alert("Please enter exactly 5 numbers separated by commas.");
+    if (numbers.length < 5) {
+        alert("Please enter at least 5 numbers separated by commas.");
         return;
     }
 
@@ -14,7 +14,7 @@ function calculateStats() {
     const dozenStats = calculateDozenStats(numbers);
 
     displayStats(colourStats, dozenStats);
-    suggestDozen(dozenStats);
+    suggestDozens(dozenStats);
     displayPrediction(colourStats, dozenStats);
 }
 
@@ -25,8 +25,6 @@ function calculateColourStats(numbers) {
         if (blackNumbers.includes(n)) blackCount++;
     });
     const total = redCount + blackCount;
-    if (total === 0) return { red: 0, black: 0 };
-
     return {
         red: ((redCount/total)*100).toFixed(2),
         black: ((blackCount/total)*100).toFixed(2)
@@ -41,8 +39,6 @@ function calculateDozenStats(numbers) {
         if (n >= 25 && n <= 36) dozenCounts[2]++;
     });
     const total = dozenCounts.reduce((a,b) => a+b,0);
-    if (total === 0) return { dozen1: 0, dozen2: 0, dozen3: 0 };
-
     return {
         dozen1: ((dozenCounts[0]/total)*100).toFixed(2),
         dozen2: ((dozenCounts[1]/total)*100).toFixed(2),
@@ -55,35 +51,35 @@ function displayStats(colourStats, dozenStats) {
     document.getElementById("dozenStats").innerHTML = `<b>Dozen %:</b> 1st = ${dozenStats.dozen1}%, 2nd = ${dozenStats.dozen2}%, 3rd = ${dozenStats.dozen3}%`;
 }
 
-function suggestDozen(dozenStats) {
+function suggestDozens(dozenStats) {
     let dozenPercentages = [
         {dozen: "1st Dozen (1-12)", percent: parseFloat(dozenStats.dozen1)},
         {dozen: "2nd Dozen (13-24)", percent: parseFloat(dozenStats.dozen2)},
         {dozen: "3rd Dozen (25-36)", percent: parseFloat(dozenStats.dozen3)}
     ];
     dozenPercentages.sort((a,b) => b.percent - a.percent);
-    let message = `✅ Best Dozen: <b>${dozenPercentages[0].dozen}</b> (${dozenPercentages[0].percent}%)`;
-    document.getElementById("dozenSuggestion").innerHTML = message;
+    document.getElementById("dozenSuggestion").innerHTML = `✅ Best Bet: <b>${dozenPercentages[0].dozen}</b> (${dozenPercentages[0].percent}%)`;
 }
 
 function displayPrediction(colourStats, dozenStats) {
     let bestDozenNumbers = [];
     let bestDozen = "1st";
 
-    // Step 1: Find the highest dozen %
+    // Step 1: Select highest dozen %
     if (dozenStats.dozen2 > dozenStats.dozen1 && dozenStats.dozen2 > dozenStats.dozen3) bestDozen = "2nd";
     else if (dozenStats.dozen3 > dozenStats.dozen1 && dozenStats.dozen3 > dozenStats.dozen2) bestDozen = "3rd";
 
+    // Step 2: Get all numbers in the best dozen
     if (bestDozen === "1st") bestDozenNumbers = Array.from({length:12},(_,i)=>i+1);
     else if (bestDozen === "2nd") bestDozenNumbers = Array.from({length:12},(_,i)=>i+13);
     else bestDozenNumbers = Array.from({length:12},(_,i)=>i+25);
 
-    // Step 2: Choose colour with highest %
+    // Step 3: Select colour with highest %
     let colour = (parseFloat(colourStats.red) > parseFloat(colourStats.black)) ? "Red" : "Black";
     let chosenColourNumbers = bestDozenNumbers.filter(n => (colour==="Red" ? redNumbers.includes(n) : blackNumbers.includes(n)));
 
-    // Step 3: Select first 6 numbers only
-    let finalNumbers = chosenColourNumbers.slice(0,6);
+    // Step 4: Select exactly 6 numbers
+    let finalNumbers = chosenColourNumbers.slice(0, 6);
 
     document.getElementById("prediction").innerHTML = `<b>🎯 Predicted Numbers:</b> ${finalNumbers.join(", ")}`;
 }
