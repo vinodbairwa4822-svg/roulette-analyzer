@@ -51,4 +51,36 @@ function calculateDozenStats(numbers) {
 }
 
 function displayStats(colourStats, dozenStats) {
-    document.getElementById("colourStats").innerHTML =
+    document.getElementById("colourStats").innerHTML = `<b>Colour %:</b> Red = ${colourStats.red}%, Black = ${colourStats.black}%`;
+    document.getElementById("dozenStats").innerHTML = `<b>Dozen %:</b> 1st = ${dozenStats.dozen1}%, 2nd = ${dozenStats.dozen2}%, 3rd = ${dozenStats.dozen3}%`;
+}
+
+function suggestDozens(dozenStats) {
+    let dozenPercentages = [
+        {dozen: "1st Dozen (1-12)", percent: parseFloat(dozenStats.dozen1)},
+        {dozen: "2nd Dozen (13-24)", percent: parseFloat(dozenStats.dozen2)},
+        {dozen: "3rd Dozen (25-36)", percent: parseFloat(dozenStats.dozen3)}
+    ];
+    dozenPercentages.sort((a,b) => b.percent - a.percent);
+
+    let message = `✅ Best Bet: <b>${dozenPercentages[0].dozen}</b> (${dozenPercentages[0].percent}%) aur <b>${dozenPercentages[1].dozen}</b> (${dozenPercentages[1].percent}%)`;
+    document.getElementById("dozenSuggestion").innerHTML = message;
+}
+
+function displayPrediction(numbers, colourStats, dozenStats) {
+    let dozens = [
+        {name:"1st", percent: parseFloat(dozenStats.dozen1), numbers: Array.from({length:12},(_,i)=>i+1)},
+        {name:"2nd", percent: parseFloat(dozenStats.dozen2), numbers: Array.from({length:12},(_,i)=>i+13)},
+        {name:"3rd", percent: parseFloat(dozenStats.dozen3), numbers: Array.from({length:12},(_,i)=>i+25)}
+    ];
+    dozens.sort((a,b) => b.percent - a.percent);
+
+    let bestDozen = dozens[0];
+    let colour = parseFloat(colourStats.red) > parseFloat(colourStats.black) ? "Red" : "Black";
+    let chosenColourNumbers = bestDozen.numbers.filter(n => colour==="Red" ? redNumbers.includes(n) : blackNumbers.includes(n));
+
+    let finalNumbers = chosenColourNumbers.slice(0,6);
+
+    document.getElementById("prediction").innerHTML = `<b>🎯 Predicted Numbers:</b> ${finalNumbers.join(", ")}`;
+    document.getElementById("bestBetPlace").innerHTML = `💡 Best Bet: ${bestDozen.name} Dozen (${bestDozen.percent}%), Colour: ${colour} (${colour==="Red" ? colourStats.red : colourStats.black}%)`;
+}
