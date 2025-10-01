@@ -5,8 +5,8 @@ function calculateStats() {
     const input = document.getElementById("numbersInput").value;
     const numbers = input.split(",").map(x => parseInt(x.trim())).filter(x => !isNaN(x));
 
-    if (numbers.length < 5) {
-        alert("Please enter at least 5 numbers separated by commas.");
+    if (numbers.length !== 5) {
+        alert("Please enter exactly 5 numbers separated by commas.");
         return;
     }
 
